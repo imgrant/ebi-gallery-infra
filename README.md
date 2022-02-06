@@ -28,7 +28,7 @@ The application required some additional features to meet the challenge requirem
 
 > Source code for the application is available at https://github.com/imgrant/LaravelGallery.
 
-A continuous integration workflow (using GitHub Actions) is also deployed with the repository, which builds the container images and pushes them to a container registry repo at [Docker Hub](https://hub.docker.com/u/igrnt).
+A continuous integration workflow (using GitHub Actions) is also deployed with the repository, which builds the container images and pushes them to a container registry repository at [Docker Hub](https://hub.docker.com/u/igrnt).
 
 ### 🏗️ Infrastructure & deployment
 
@@ -113,7 +113,7 @@ This repository contains code for deploying the service, using [Terraform](https
 4. ### Apply the Terraform plan to create the cloud infrastructure:
 
     ```shell
-    terraform apply
+    $ terraform apply
 
     Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the following symbols:
       + create
@@ -215,7 +215,7 @@ This repository contains code for deploying the service, using [Terraform](https
     203.0.113.79                 : ok=47   changed=25   unreachable=0    failed=0    skipped=18   rescued=0    ignored=0   
     ```
 
-   💡 `terraform-inventory` constructs the Ansible inventory dynamically from theTerraform state, passing in some key variables.
+   💡 `terraform-inventory` constructs the Ansible inventory dynamically from the Terraform state, passing in some key variables.
    The SSH key file created by the Terraform plan is used to authenticate, and host key checking is disabled in Ansible to bypass the unknown host key prompt.
 
 7. ### 🥳 Go to the application URL and use the interface to browse and upload images
