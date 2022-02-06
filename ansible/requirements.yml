@@ -1,0 +1,9 @@
+---
+roles:
+  - mrlesmithjr.manage-lvm
+  - geerlingguy.pip
+  - geerlingguy.docker
+
+collections:
+  - community.general
+  - community.docker

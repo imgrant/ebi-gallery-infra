@@ -1,0 +1,111 @@
+---
+- name: EBI Gallery host configuration
+  hosts: ebi-gallery-ip
+  become: yes
+  vars:
+    manage_lvm: true
+    lvm_groups:
+      - vgname: ebi_ebs_vg
+        disks:
+          - "{{ ebs_volume_device }}"   # Automatically set by terraform-inventory from state output
+        create: true
+        lvnames:
+          - lvname: ebi_ebs_docker
+            create: true
+            size: "100%FREE"
+            filesystem: ext4
+            mount: true
+            mntp: /var/lib/docker
+    pip_install_packages:
+      - name: docker
+      - name: docker-compose
+    docker_users:
+      - ubuntu
+  vars_files:
+    - ebi-gallery-vars.yaml
+
+  roles:
+    - ebs-automatic-nvme-mapping
+    - mrlesmithjr.manage-lvm
+    - geerlingguy.pip
+    - geerlingguy.docker
+
+  tasks:
+    - name: Set the system hostname
+      ansible.builtin.command: hostnamectl set-hostname {{ ec2_tags_all.Name }}.{{ ansible_domain }}
+
+    - name: Clone EBI Gallery web app code repo
+      ansible.builtin.git:
+        repo: 'https://github.com/imgrant/LaravelGallery.git'
+        dest: /app
+
+    - name: Set the Laravel app key and database password
+      ansible.builtin.set_fact:
+        laravel_app_key: "{{ existing_laravel_app_key | default(lookup('community.general.random_string', base64=True, length=32), true) }}"
+        database_password: "{{ existing_database_password | default(lookup('community.general.random_string', special=False, min_lower=2, min_upper=2, min_numeric=2, length=16), true) }}"
+
+    - name: Deploy .env file
+      ansible.builtin.template:
+        src: env_file.j2
+        dest: /app/.env
+
+    - name: Build images and bring up Docker Compose services
+      community.docker.docker_compose:
+        project_name: ebi-gallery
+        project_src: /app
+        state: present
+        build: yes
+
+    - name: Wait for database to be ready
+      community.docker.docker_container_exec:
+        container: gallery-db
+        command: "mysqlcheck -u {{ database_user }} -p{{ database_password }} {{ database_db }}"
+      register: result
+      until: result.rc == 0
+      retries: 10
+      delay: 5
+      changed_when: False
+
+    - name: Seed database and run migrations
+      community.docker.docker_container_exec:
+        container: gallery-app
+        argv:
+          - php
+          - artisan
+          - migrate 
+          - --seed
+      register: migration_result
+      changed_when: '"Nothing to migrate." not in migration_result.stdout'
+
+    - name: Display new Laravel app key
+      pause:
+        seconds: 3
+        prompt: |
+          ============================================================================
+          An existing Laravel app key was not provided, so a new one was generated and
+          stored in the .env file. You should update the 'existing_laravel_app_key' 
+          variable in the ebi-gallery-vars.yaml vars file for subsequent runs.
+          The new app key is:
+            {{ laravel_app_key }}
+          ============================================================================
+        echo: no
+      when: existing_laravel_app_key == ''
+
+    - name: Display new database password
+      pause:
+        seconds: 3
+        prompt: |
+          ============================================================================
+          An existing database password for Laravel was not provided, so a new one has
+          been generated and stored in the .env file.
+          You should update the 'existing_database_password' variable in the
+          ebi-gallery-vars.yaml vars file for subsequent runs.
+          The new database password is:
+            {{ database_password }}
+          ============================================================================
+        echo: no
+      when: existing_database_password == ''
+
+    - name: EBI Gallery app URL
+      debug:
+        msg: "Browse to the application at {{ laravel_app_url }}"

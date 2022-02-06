@@ -1,0 +1,8 @@
+---
+database_db: gallery
+database_user: galleryuser
+# Set these vars if known here, otherwise random defaults will be generated
+existing_laravel_app_key: ''
+existing_database_password: ''
+# Override the app URL if it's not just the Elastic IP
+laravel_app_url: "http://{{ ansible_host }}"
