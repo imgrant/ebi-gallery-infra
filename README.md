@@ -157,7 +157,7 @@ This repository contains code for deploying the service, using [Terraform](https
     Outputs:
 
     ebs_volume_device = "/dev/xvde"
-    ec2_arn = "arn:aws:ec2:eu-west-2:XXXXX:instance/i-0x0x0x0x0x0x0x0ef"
+    ec2_arn = "arn:aws:ec2:eu-west-2:***REMOVED***:instance/i-0x0x0x0x0x0x0x0ef"
     ec2_capacity_reservation_specification = tolist([
       {
         "capacity_reservation_preference" = "open"
@@ -252,22 +252,22 @@ This repository contains code for deploying the service, using [Terraform](https
 
     Changes to Outputs:
       - ebs_volume_device                      = "/dev/xvde" -> null
-      - ec2_arn                                = "arn:aws:ec2:eu-west-2:***REMOVED***:instance/i-01bfad8fb63142cdf" -> null
+      - ec2_arn                                = "arn:aws:ec2:eu-west-2:***REMOVED***:instance/i-0x0x0x0x0x0x0x0ef" -> null
       - ec2_capacity_reservation_specification = [
           - {
               - capacity_reservation_preference = "open"
               - capacity_reservation_target     = []
             },
         ] -> null
-      - ec2_id                                 = "i-01bfad8fb63142cdf" -> null
+      - ec2_id                                 = "i-0x0x0x0x0x0x0x0ef" -> null
       - ec2_instance_state                     = "running" -> null
-      - ec2_primary_network_interface_id       = "eni-07b33bd58cb7865ea" -> null
+      - ec2_primary_network_interface_id       = "eni-0x0x0x0x0x0x0x0ef" -> null
       - ec2_tags_all                           = {
           - "Environment" = "dev"
           - "Name"        = "ebi-gallery-stack"
           - "Owner"       = "ebi-gallery-app"
         } -> null
-      - elastic_ip                             = "3.11.28.43" -> null
+      - elastic_ip                             = "203.0.113.79" -> null
       - private_key                            = "ebi_gallery_key.pem" -> null
 
     Do you really want to destroy all resources?
