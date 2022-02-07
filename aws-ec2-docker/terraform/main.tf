@@ -87,6 +87,7 @@ resource "local_file" "private_key" {
 resource "aws_key_pair" "ssh_keypair" {
   key_name   = var.generated_key_name
   public_key = tls_private_key.ebi_gallery_key.public_key_openssh
+  tags       = local.tags
 }
 
 ################################################################################
