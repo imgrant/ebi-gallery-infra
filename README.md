@@ -6,7 +6,7 @@ Cloud infrastructure declaration and deployment code for a technical challenge s
 
 ```shell
 $ git clone https://github.com/imgrant/ebi-gallery-infra.git
-$ cd ebi-gallery-infra/terraform
+$ cd ebi-gallery-infra/aws-ec2-docker/terraform
 $ terraform init && terraform apply
 $ cd ../ansible
 $ ./deploy_ebi_gallery.sh
@@ -71,7 +71,7 @@ This repository contains code for deploying the service, using [Terraform](https
 3. ### Prepare the Terraform environment:
 
     ```shell
-    $ cd ebi-gallery-infra/terraform
+    $ cd ebi-gallery-infra/aws-ec2-docker/terraform
     $ terraform init
     Initializing modules...
     Downloading registry.terraform.io/terraform-aws-modules/ec2-instance/aws 3.4.0 for ec2...
