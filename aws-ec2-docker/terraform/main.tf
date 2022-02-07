@@ -22,9 +22,8 @@ provider "aws" {
 }
 
 locals {
-  name          = "ebi-gallery-stack"
   tags = {
-    Owner       = "ebi-gallery-app"
+    Owner       = "${var.app_name}-app"
     Environment = "dev"
   }
 }
@@ -37,7 +36,7 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 3.0"
 
-  name = local.name
+  name = "${var.app_name}-stack-vpc"
   cidr = "10.99.0.0/18"
 
   azs              = ["${var.aws_region}a", "${var.aws_region}b", "${var.aws_region}c"]
@@ -62,7 +61,7 @@ module "security_group" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "~> 4.0"
 
-  name        = local.name
+  name        = "${var.app_name}-stack-sg"
   description = "Security group for EBI gallery app EC2 instance"
   vpc_id      = module.vpc.vpc_id
 
@@ -97,7 +96,7 @@ resource "aws_key_pair" "ssh_keypair" {
 module "ec2" {
   source = "terraform-aws-modules/ec2-instance/aws"
 
-  name                        = local.name
+  name                        = "${var.app_name}-stack-ec2"
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = var.ec2_instance_size
   key_name                    = aws_key_pair.ssh_keypair.key_name

@@ -19,3 +19,9 @@ variable "generated_key_name" {
   type        = string
   default     = "ebi_gallery_key"
 }
+
+variable "app_name" {
+  description = "Configurable base name to use for the tags, etc in AWS"
+  type        = string
+  default     = "ebi-gallery"
+}
