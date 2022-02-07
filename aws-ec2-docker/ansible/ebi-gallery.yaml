@@ -2,6 +2,8 @@
 - name: EBI Gallery host configuration
   hosts: ebi-gallery-ip
   become: yes
+  vars_files:
+    - ebi-gallery-vars.yaml
   vars:
     manage_lvm: true
     lvm_groups:
@@ -21,8 +23,6 @@
       - name: docker-compose
     docker_users:
       - ubuntu
-  vars_files:
-    - ebi-gallery-vars.yaml
 
   roles:
     - ebs-automatic-nvme-mapping
@@ -30,19 +30,33 @@
     - geerlingguy.pip
     - geerlingguy.docker
 
-  tasks:
+  pre_tasks:
     - name: Set the system hostname
       ansible.builtin.command: hostnamectl set-hostname {{ ec2_tags_all.Name }}.{{ ansible_domain }}
 
+    - name: Update APT cache
+      ansible.builtin.apt:
+        update_cache: yes
+
+  tasks:
     - name: Clone EBI Gallery web app code repo
       ansible.builtin.git:
         repo: 'https://github.com/imgrant/LaravelGallery.git'
         dest: /app
 
-    - name: Set the Laravel app key and database password
+    - name: Set the Laravel app key
       ansible.builtin.set_fact:
         laravel_app_key: "{{ existing_laravel_app_key | default(lookup('community.general.random_string', base64=True, length=32), true) }}"
+      changed_when: laravel_app_key != existing_laravel_app_key
+      notify:
+        - Display generated Laravel app key
+
+    - name: Set the database password
+      ansible.builtin.set_fact:
         database_password: "{{ existing_database_password | default(lookup('community.general.random_string', special=False, min_lower=2, min_upper=2, min_numeric=2, length=16), true) }}"
+      changed_when: database_password != existing_database_password
+      notify:
+        - Display generated database password
 
     - name: Deploy .env file
       ansible.builtin.template:
@@ -77,9 +91,14 @@
       register: migration_result
       changed_when: '"Nothing to migrate." not in migration_result.stdout'
 
-    - name: Display new Laravel app key
+    - name: EBI Gallery app URL
+      debug:
+        msg: "Browse to the application at {{ laravel_app_url }}"
+
+  handlers:
+    - name: Display generated Laravel app key
       pause:
-        seconds: 3
+        seconds: 5
         prompt: |
           ============================================================================
           An existing Laravel app key was not provided, so a new one was generated and
@@ -89,11 +108,10 @@
             {{ laravel_app_key }}
           ============================================================================
         echo: no
-      when: existing_laravel_app_key == ''
 
-    - name: Display new database password
+    - name: Display generated database password
       pause:
-        seconds: 3
+        seconds: 5
         prompt: |
           ============================================================================
           An existing database password for Laravel was not provided, so a new one has
@@ -104,8 +122,3 @@
             {{ database_password }}
           ============================================================================
         echo: no
-      when: existing_database_password == ''
-
-    - name: EBI Gallery app URL
-      debug:
-        msg: "Browse to the application at {{ laravel_app_url }}"
