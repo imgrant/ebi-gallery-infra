@@ -25,7 +25,7 @@
       - ubuntu
 
   roles:
-    - ebs-automatic-nvme-mapping
+    - ebs-automatic-nvme-mapping  # Based on tenhishadow.ansible_ebs_automatic_nvme_mapping and https://github.com/oogali/ebs-automatic-nvme-mapping
     - mrlesmithjr.manage-lvm
     - geerlingguy.pip
     - geerlingguy.docker

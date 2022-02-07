@@ -1,0 +1,22 @@
+galaxy_info:
+  author: Ian Grant <ian.grant@kcl.ac.uk>
+  description: Symlink NVMe devices to the requested device name for AWS EBS volumes
+  company: King’s College London
+  license: MIT
+  min_ansible_version: 2.8
+  platforms:
+    - name: Ubuntu
+      versions:
+        - focal
+        - bionic
+    - name: Debian
+      versions:
+        - bookworm
+        - bullseye
+        - buster
+  galaxy_tags:
+    - aws
+    - ebs
+    - nvme
+    - disk
+dependencies: []

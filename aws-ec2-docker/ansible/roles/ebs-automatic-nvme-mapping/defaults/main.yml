@@ -1,0 +1,3 @@
+---
+# defaults file for ebs-automatic-nvme-mapping
+force_run: false  # Override NVMe detection
