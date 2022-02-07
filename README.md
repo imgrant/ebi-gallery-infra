@@ -196,6 +196,8 @@ This repository contains code for deploying the service, using [Terraform](https
     💡 The output you see may differ from that above, depending on what Ansible roles
     and collections you do or don't already have installed.
 
+    💡 With Ansible `>=2.10`, roles and collections can be installed from a requirements file in a single step with, e.g.: `ansible-galaxy install -r requirements.yml`
+
 6. ### Run the Ansible playbook to configure the system and deploy the app:
 
     ```shell
