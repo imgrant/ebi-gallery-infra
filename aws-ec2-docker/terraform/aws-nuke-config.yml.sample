@@ -1,0 +1,78 @@
+--- 
+regions:
+  - "<AWS region to nuke>"
+
+account-blocklist:
+  - "999999999999" # dummy
+
+resource-types:
+  targets:
+    - EC2Instance
+    - EC2Subnet
+    - EC2InternetGateway
+    - EC2InternetGatewayAttachment
+    - EC2NetworkInterface
+    - EC2VPC
+    - EC2KeyPair
+    - EC2SecurityGroup
+    - EC2DefaultSecurityGroupRule
+    - EC2Address
+    - EC2Volume
+    - EC2RouteTable
+    - RDSDBSubnetGroup
+
+accounts:
+  "<Your AWS Account ID>":
+    filters:
+      EC2Instance:
+        - property: "tag:Owner"
+          value: "ebi-gallery-app"
+          invert: true
+      EC2Subnet:
+        - property: "tag:Owner"
+          value: "ebi-gallery-app"
+          invert: true
+      EC2InternetGateway:
+        - property: "tag:Owner"
+          value: "ebi-gallery-app"
+          invert: true
+      EC2InternetGatewayAttachment:
+        - property: "tag:Owner"
+          value: "ebi-gallery-app"
+          invert: true
+      EC2NetworkInterface:
+        - property: "tag:Owner"
+          value: "ebi-gallery-app"
+          invert: true
+      EC2VPC:
+        - property: "tag:Owner"
+          value: "ebi-gallery-app"
+          invert: true
+      EC2KeyPair:
+        - property: "tag:Owner"
+          value: "ebi-gallery-app"
+          invert: true
+      EC2SecurityGroup:
+        - property: "tag:Owner"
+          value: "ebi-gallery-app"
+          invert: true
+      EC2DefaultSecurityGroupRule:
+        - property: "tag:Owner"
+          value: "ebi-gallery-app"
+          invert: true
+      EC2Address:
+        - property: "tag:Owner"
+          value: "ebi-gallery-app"
+          invert: true
+      EC2Volume:
+        - property: "tag:Owner"
+          value: "ebi-gallery-app"
+          invert: true
+      EC2RouteTable:
+        - property: "tag:Owner"
+          value: "ebi-gallery-app"
+          invert: true
+      RDSDBSubnetGroup:
+        - property: "tag:Owner"
+          value: "ebi-gallery-app"
+          invert: true

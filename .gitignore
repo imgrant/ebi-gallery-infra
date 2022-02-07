@@ -35,3 +35,6 @@ override.tf.json
 
 # Default name for the generated (private) SSH key
 ebi_gallery_key.pem
+
+# Config file for aws-nuke
+aws-ec2-docker/terraform/aws-nuke-config.yml
