@@ -4,6 +4,11 @@ variable "do_token" {
   sensitive = true
 }
 
+variable "do_project_name" {
+  description = "DigitalOcean project name"
+  type = string
+  default = "ebi-gallery"
+}
 variable "github_owner" {
   description = "User or organization owning the GitHub repository for Flux"
   type = string
