@@ -6,6 +6,40 @@ provider "digitalocean" {
   token = var.do_token
 }
 
+provider "github" {
+  owner = var.github_owner
+  token = var.github_token
+}
+
+provider "flux" {}
+
+provider "kubectl" {
+  host             = data.digitalocean_kubernetes_cluster.primary.endpoint
+  token            = data.digitalocean_kubernetes_cluster.primary.kube_config[0].token
+  cluster_ca_certificate = base64decode(
+    data.digitalocean_kubernetes_cluster.primary.kube_config[0].cluster_ca_certificate
+  )
+  load_config_file = false
+}
+
+provider "kubernetes" {
+  host             = data.digitalocean_kubernetes_cluster.primary.endpoint
+  token            = data.digitalocean_kubernetes_cluster.primary.kube_config[0].token
+  cluster_ca_certificate = base64decode(
+    data.digitalocean_kubernetes_cluster.primary.kube_config[0].cluster_ca_certificate
+  )
+}
+
+provider "helm" {
+  kubernetes {
+    host  = data.digitalocean_kubernetes_cluster.primary.endpoint
+    token = data.digitalocean_kubernetes_cluster.primary.kube_config[0].token
+    cluster_ca_certificate = base64decode(
+      data.digitalocean_kubernetes_cluster.primary.kube_config[0].cluster_ca_certificate
+    )
+  }
+}
+
 locals {
   k8s_cluster_name  = "k8s-${lower(digitalocean_project.active.name)}"
   db_cluster_name   = "db-${lower(digitalocean_project.active.name)}"
@@ -57,4 +91,14 @@ module "db-cluster" {
   node_count            = var.db_node_count
   k8s_cluster_name      = module.doks-cluster.cluster_name
   k8s_cluster_id        = module.doks-cluster.cluster_id
+}
+
+module "kubernetes-config" {
+  source                = "./k8s-config"
+  k8s_cluster_name      = module.doks-cluster.cluster_name
+  k8s_cluster_id        = module.doks-cluster.cluster_id
+  github_owner          = var.github_owner
+  flux_repo_name        = var.flux_repo_name
+  flux_repo_branch      = var.flux_repo_branch
+  flux_target_path      = var.flux_target_path
 }

@@ -85,3 +85,21 @@ variable "github_token" {
   type = string
   sensitive = true
 }
+
+variable "flux_repo_name" {
+  description = "GitHub repository name for Flux (should already exist)"
+  type = string
+  default = "ebi-gallery-infra"
+}
+
+variable "flux_repo_branch" {
+  description = "Branch to use on the GitHub repository for Flux"
+  type = string
+  default = "main"
+}
+
+variable "flux_target_path" {
+  description = "Target path in the GitHub repo to use for Flux"
+  type = string
+  default = "do-k8s-flux/flux"
+}
