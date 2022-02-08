@@ -13,6 +13,8 @@ crash.log
 # version control.
 #
 # example.tfvars
+# 
+# Ignore any custom auto.tfvars files (see example.tfvars for a template)
 *.auto.tfvars
 
 # Ignore override files as they are usually used to override resources locally and so
@@ -29,6 +31,9 @@ override.tf.json
 # Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
 # example: *tfplan*
 *tfplan*
+
+# Ignore Terraform Cloud settings (see cloud.tf.sample)
+cloud.tf
 
 # VS Code
 .vscode
