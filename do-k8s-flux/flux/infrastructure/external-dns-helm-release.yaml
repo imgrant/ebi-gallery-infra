@@ -29,5 +29,5 @@ spec:
       create: true
     provider: cloudflare
     domainFilters: [ "iangrant.me" ]
-    digitalocean:
+    cloudflare:
       secretName: cloudflare-api-token
