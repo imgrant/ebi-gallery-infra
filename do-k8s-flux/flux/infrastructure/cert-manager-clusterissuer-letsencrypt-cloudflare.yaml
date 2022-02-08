@@ -7,7 +7,7 @@ metadata:
 spec:
   acme:
     server: https://acme-staging-v02.api.letsencrypt.org/directory
-    email: admin@medindex.co.uk
+    email: ian@iangrant.me
     privateKeySecretRef:
       name: letsencrypt-staging-cloudflare
     solvers:
@@ -29,7 +29,7 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: admin@medindex.co.uk
+    email: ian@iangrant.me
     privateKeySecretRef:
       name: letsencrypt-production-cloudflare
     solvers:
