@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: ebi-gallery
+  namespace: default
 data:
   APP_NAME: "EBI Gallery"
   APP_ENV: "dev"
