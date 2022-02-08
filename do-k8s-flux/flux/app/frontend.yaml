@@ -60,7 +60,7 @@ spec:
       paths:
       - path: /
         pathType: Prefix
-        frontend:
+        backend:
           service:
             name: ebi-gallery-frontend
             port:
