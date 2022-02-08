@@ -4,6 +4,8 @@ terraform {
 
 provider "digitalocean" {
   token = var.do_token
+  spaces_access_id = var.do_spaces_access_key
+  spaces_secret_key = var.do_spaces_secret_key
 }
 
 provider "github" {
@@ -30,8 +32,21 @@ resource "digitalocean_project_resources" "this" {
   project = digitalocean_project.active.id
   resources = [
     data.digitalocean_kubernetes_cluster.primary.urn,
-    data.digitalocean_database_cluster.primary.urn
+    data.digitalocean_database_cluster.primary.urn,
+    digitalocean_spaces_bucket.ebi_gallery_storage.urn
   ]
+}
+
+resource "digitalocean_spaces_bucket" "ebi_gallery_storage" {
+  name   = "s3-${lower(digitalocean_project.active.name)}"
+  force_destroy = true  # Allow the bucket to be deleted when not empty
+
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET"]
+    allowed_origins = ["*"]
+    max_age_seconds = 3000
+  }
 }
 
 data "digitalocean_kubernetes_cluster" "primary" {

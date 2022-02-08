@@ -40,3 +40,13 @@ output "db_default_password" {
   description = "Password for the default (primary) user on the managed database cluster."
   sensitive = true
 }
+
+output "s3_bucket_name" {
+  value = digitalocean_spaces_bucket.ebi_gallery_storage.name
+  description = "Spaces S3 storage bucket name"
+}
+
+output "s3_bucket_fqdn" {
+  value = digitalocean_spaces_bucket.ebi_gallery_storage.bucket_domain_name
+  description = "FQDN for the Spaces S3 storage bucket"
+}
