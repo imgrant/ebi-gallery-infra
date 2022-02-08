@@ -53,7 +53,6 @@ resource "digitalocean_project" "active" {
   name = var.do_project_name
   description = "EBI01948 technical challenge"
   environment = "Staging"
-  resources = []
 }
 
 resource "digitalocean_project_resources" "this" {
