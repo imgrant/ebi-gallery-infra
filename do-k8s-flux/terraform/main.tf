@@ -56,6 +56,14 @@ resource "digitalocean_project" "active" {
   resources = []
 }
 
+resource "digitalocean_project_resources" "this" {
+  project = digitalocean_project.active.id
+  resources = [
+    data.digitalocean_kubernetes_cluster.primary.urn,
+    data.digitalocean_database_cluster.primary.urn
+  ]
+}
+
 data "digitalocean_kubernetes_cluster" "primary" {
   name        = module.doks-cluster.cluster_name
   depends_on  = [module.doks-cluster]
