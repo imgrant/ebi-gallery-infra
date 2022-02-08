@@ -19,12 +19,12 @@ spec:
     spec:
       containers:
         - name: frontend-nginx
-          image: igrnt/ebi-gallery-frontend:1.1.0
+          image: igrnt/ebi-gallery-frontend:1.1.1
           ports:
             - containerPort: 80
           env:
             - name: FPM_HOST
-              value: backend-fpm:9000
+              value: ebi-gallery-backend:9000
 ---
 apiVersion: v1
 kind: Service

@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: backend-fpm
-          image: igrnt/ebi-gallery-backend:1.1.0
+          image: igrnt/ebi-gallery-backend:1.1.1
           ports:
             - containerPort: 9000
           envFrom:
