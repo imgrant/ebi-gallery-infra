@@ -43,3 +43,6 @@ ebi_gallery_key.pem
 
 # Config file for aws-nuke
 aws-ec2-docker/terraform/aws-nuke-config.yml
+
+# Don't commit any exported Sealed Secrets certificates
+sealed-secrets*.pem
