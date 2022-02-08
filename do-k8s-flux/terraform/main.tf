@@ -11,35 +11,6 @@ provider "github" {
   token = var.github_token
 }
 
-provider "flux" {}
-
-provider "kubectl" {
-  host             = data.digitalocean_kubernetes_cluster.primary.endpoint
-  token            = data.digitalocean_kubernetes_cluster.primary.kube_config[0].token
-  cluster_ca_certificate = base64decode(
-    data.digitalocean_kubernetes_cluster.primary.kube_config[0].cluster_ca_certificate
-  )
-  load_config_file = false
-}
-
-provider "kubernetes" {
-  host             = data.digitalocean_kubernetes_cluster.primary.endpoint
-  token            = data.digitalocean_kubernetes_cluster.primary.kube_config[0].token
-  cluster_ca_certificate = base64decode(
-    data.digitalocean_kubernetes_cluster.primary.kube_config[0].cluster_ca_certificate
-  )
-}
-
-provider "helm" {
-  kubernetes {
-    host  = data.digitalocean_kubernetes_cluster.primary.endpoint
-    token = data.digitalocean_kubernetes_cluster.primary.kube_config[0].token
-    cluster_ca_certificate = base64decode(
-      data.digitalocean_kubernetes_cluster.primary.kube_config[0].cluster_ca_certificate
-    )
-  }
-}
-
 locals {
   k8s_cluster_name  = "k8s-${lower(digitalocean_project.active.name)}"
   db_cluster_name   = "db-${lower(digitalocean_project.active.name)}"
@@ -100,7 +71,42 @@ module "db-cluster" {
   k8s_cluster_id        = module.doks-cluster.cluster_id
 }
 
-module "kubernetes-config" {
+provider "flux" {}
+
+provider "kubernetes" {
+  host             = data.digitalocean_kubernetes_cluster.primary.endpoint
+  cluster_ca_certificate = base64decode(
+    data.digitalocean_kubernetes_cluster.primary.kube_config[0].cluster_ca_certificate
+  )
+
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "doctl"
+    args = ["kubernetes", "cluster", "kubeconfig", "exec-credential",
+    "--version=v1beta1", data.digitalocean_kubernetes_cluster.primary.id]
+  }
+}
+
+provider "kubectl" {
+  host             = data.digitalocean_kubernetes_cluster.primary.endpoint
+  token            = data.digitalocean_kubernetes_cluster.primary.kube_config[0].token
+  cluster_ca_certificate = base64decode(
+    data.digitalocean_kubernetes_cluster.primary.kube_config[0].cluster_ca_certificate
+  )
+  load_config_file = false
+}
+
+provider "helm" {
+  kubernetes {
+    host  = data.digitalocean_kubernetes_cluster.primary.endpoint
+    token = data.digitalocean_kubernetes_cluster.primary.kube_config[0].token
+    cluster_ca_certificate = base64decode(
+      data.digitalocean_kubernetes_cluster.primary.kube_config[0].cluster_ca_certificate
+    )
+  }
+}
+
+module "k8s-config" {
   source                = "./k8s-config"
   k8s_cluster_name      = module.doks-cluster.cluster_name
   k8s_cluster_id        = module.doks-cluster.cluster_id
