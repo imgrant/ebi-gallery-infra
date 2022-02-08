@@ -47,7 +47,7 @@ metadata:
   name: ebi-gallery-frontend
   namespace: default
   annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-staging-cloudflare"
+    cert-manager.io/cluster-issuer: "letsencrypt-production-cloudflare"
 spec:
   tls:
   - hosts:
