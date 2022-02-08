@@ -5,6 +5,11 @@ output "doks_cluster_name" {
   description = "DOKS cluster name. Get the kubeconfig with: 'doctl kubernetes cluster kubeconfig save <value>'."
 }
 
+output "doks_cluster_endpoint" {
+  value = module.doks-cluster.cluster_endpoint
+  description = "Public hostname to reach the Kubernetes API endpoint for the DOKS cluster."
+}
+
 output "db_host_public" {
   value = module.db-cluster.db_host_public
   description = "Public hostname to reach the managed database cluster."
