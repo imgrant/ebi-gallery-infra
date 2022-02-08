@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ebi-gallery-backend
+  labels:
+    tier: backend
+    layer: php
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: backend
+      layer: php
+  template:
+    metadata:
+      labels:
+        tier: backend
+        layer: php
+    spec:
+      containers:
+        - name: backend-fpm
+          image: igrnt/ebi-gallery-backend:1.1.0
+          ports:
+            - containerPort: 9000
+          envFrom:
+            - configMapRef:
+                name: ebi-gallery
+            - secretRef:
+                name: ebi-gallery
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ebi-gallery-backend
+spec:
+  selector:
+    tier: backend
+    layer: php
+  ports:
+    - protocol: TCP
+      port: 9000
+      targetPort: 9000
