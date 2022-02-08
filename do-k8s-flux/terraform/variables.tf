@@ -50,6 +50,31 @@ variable "doks_node_size" {
   type = string
   default = "s-1vcpu-2gb"
 }
+
+variable "db_cluster_auto_upgrade_day" {
+  description = "Day of the week to perform cluster maintenance"
+  type = string
+  default = "sunday"
+}
+
+variable "db_cluster_auto_upgrade_time" {
+  description = "Start time (in UTC) for the maintenance window"
+  type = string
+  default = "02:00:00"
+}
+
+variable "db_node_size" {
+  description = "Size of droplets in the database cluster (use DO DB slug names)"
+  type = string
+  default = "db-s-1vcpu-1gb"
+}
+
+variable "db_node_count" {
+  description = "Number of nodes to provision for the database cluster"
+  type = number
+  default = 1
+}
+
 variable "github_owner" {
   description = "User or organization owning the GitHub repository for Flux"
   type = string

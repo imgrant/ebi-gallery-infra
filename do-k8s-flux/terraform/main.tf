@@ -38,3 +38,24 @@ module "doks-cluster" {
   worker_count_min      = var.doks_nodes_min
   worker_count_max      = var.doks_nodes_max
 }
+
+data "digitalocean_database_cluster" "primary" {
+  name        = module.db-cluster.cluster_name
+  depends_on  = [module.db-cluster]
+}
+
+module "db-cluster" {
+  source                = "./db-cluster"
+  depends_on            = [module.doks-cluster]
+  cluster_name          = local.db_cluster_name
+  cluster_region        = var.do_region
+  db_engine             = local.database.engine
+  engine_version        = local.database.version
+  cluster_upgrade_day   = var.db_cluster_auto_upgrade_day
+  cluster_upgrade_time  = var.db_cluster_auto_upgrade_time
+  node_size             = var.db_node_size
+  node_count            = var.db_node_count
+  databases             = var.databases
+  k8s_cluster_name      = module.doks-cluster.cluster_name
+  k8s_cluster_id        = module.doks-cluster.cluster_id
+}
