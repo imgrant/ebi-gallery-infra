@@ -23,10 +23,6 @@ resource "digitalocean_database_cluster" "primary" {
     day   = var.cluster_upgrade_day
     hour  = var.cluster_upgrade_time
   }
-
-  lifecycle {
-    prevent_destroy = true
-  }
 }
 
 resource "digitalocean_database_firewall" "primary" {
