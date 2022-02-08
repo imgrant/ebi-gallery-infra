@@ -55,7 +55,6 @@ module "db-cluster" {
   cluster_upgrade_time  = var.db_cluster_auto_upgrade_time
   node_size             = var.db_node_size
   node_count            = var.db_node_count
-  databases             = var.databases
   k8s_cluster_name      = module.doks-cluster.cluster_name
   k8s_cluster_id        = module.doks-cluster.cluster_id
 }
