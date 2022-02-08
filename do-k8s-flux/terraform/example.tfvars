@@ -8,5 +8,7 @@
 #
 
 do_token="Your DigitalOcean API personal access token"
+do_spaces_access_key = "Your DigitalOcean Spaces API access key ID"
+do_spaces_secret_key = "Your DigitalOcean Spaces API access key secret"
 github_token="Your GitHub.com personal access token, which has access to the repository"
 github_owner="The GitHub.com username or organization, which owns the repository"
