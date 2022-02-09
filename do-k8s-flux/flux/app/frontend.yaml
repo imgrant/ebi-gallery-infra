@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: frontend-nginx
-          image: igrnt/ebi-gallery-frontend:1.2.0
+          image: igrnt/ebi-gallery-frontend:1.2.1
           ports:
             - containerPort: 80
           env:
