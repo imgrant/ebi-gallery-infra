@@ -41,6 +41,12 @@ output "db_default_password" {
   sensitive = true
 }
 
+output "db_gallery_user_password" {
+  value = digitalocean_database_user.ebi_gallery_user.password
+  description = "Password for the gallery application user for the managed database cluster."
+  sensitive = true
+}
+
 output "s3_bucket_name" {
   value = digitalocean_spaces_bucket.ebi_gallery_storage.name
   description = "Spaces S3 storage bucket name"

@@ -86,6 +86,12 @@ module "db-cluster" {
   k8s_cluster_id        = module.doks-cluster.cluster_id
 }
 
+resource "digitalocean_database_user" "ebi_gallery_user" {
+  cluster_id = data.digitalocean_database_cluster.primary.id
+  name       = "galleryuser"
+  mysql_auth_plugin = "mysql_native_password" # Needed because Laravel 5 doesn't work with the default caching_sha2_password
+}
+
 provider "flux" {}
 
 provider "kubernetes" {
