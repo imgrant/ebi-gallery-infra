@@ -4,16 +4,12 @@
 
 This deployment uses [_Terraform_](https://www.terraform.io/) to provision several key cloud infrastructure resources on the DigitalOcean cloud platform (Kubernetes cluster, database cluster, object storage service).
 
-Terraform also bootstraps the Kubernetes cluster with [_Flux_](https://fluxcd.io/), and configures this GitHub repository by committing the [_GitOps Toolkit_](https://fluxcd.io/docs/components/) components for _Flux_ to version control, and creating & adding an SSH deploy key that the cluster will use for Flux reconciliation.
+Terraform also bootstraps the Kubernetes cluster with [_Flux_](https://fluxcd.io/), and configures this GitHub repository by committing the [_GitOps Toolkit_](https://fluxcd.io/docs/components/) components for _Flux_ to version control, and creating & adding an SSH deploy key that the cluster will use for Flux reconciliation. Once _Flux_ is installed, it will take over and deploy workloads defined in the source repository (see [Features](#features)). The _Sealed Secrets_ infrastructure component must be available before encrypted secrets needed by other components (_cert-manager_, _ExternalDNS_, the end application configuration) can be used.
 
-Once _Flux_ is installed, it will take over and deploy workloads defined in the source repository (see [Features](#features)). The _Sealed Secrets_ infrastructure component must be available before encrypted secrets needed by other components (_cert-manager_, _ExternalDNS_, the end application configuration) can be used.
-
-This repository represents the configured state of a live system, deployed at https://ebi-gallery-do.iangrant.me [^1]
-
-You can deploy the application yourself using this codebase by forking the repository, and modifying the deployment & configuration parameters appropriately. At the time of writing, DigitalOcean offer a [$100 free credit, 60-day trial](https://www.digitalocean.com/?refcode=56ab1cd93fe6) (or you could adapt the code to another cloud provider).
-See the workflow in [🚚 Usage](#-usage), below.
+This repository represents the configured state of a live system, deployed at https://ebi-gallery-do.iangrant.me [^1] You can deploy the application yourself using this codebase by forking the repository, and modifying the deployment & configuration parameters appropriately.[^2] See the workflow in [🚚 Usage](#-usage), below.
 
 [^1]: The live system has been deployed for the purposes of demonstrating the technical challenge; it will be shut down after February 14, 2002.
+[^2]: At the time of writing, DigitalOcean offer a [$100 free credit, 60-day trial](https://www.digitalocean.com/?refcode=56ab1cd93fe6). Alternatively, you could adapt the code to another cloud provider.
 
 ### Features
 
@@ -28,6 +24,8 @@ See the workflow in [🚚 Usage](#-usage), below.
     - [_Sealed Secrets_](https://github.com/bitnami-labs/sealed-secrets) Controller, which enables K8s Secrets to be stored in version control and used in GitOps workflows by managing their encryption lifecycle
     - The application itself, as Kubernetes Deployment, Service and Ingress workloads, with a K8s ConfigMap and Secret that defines the application environment (configuring it to use the managed MySQL database and Spaces S3 endpoint as the filesystem driver). Updates to the application deployment are triggered by committing changes to the [definitions](flux/app/) in the repository.
   - Application is consequently served over HTTPS, via DNS hostname record automatically configured at Cloudflare, and public IP address exposed by the DigitalOcean load balancer. Images uploaded via the application are stored in, and served directly from, a DigitalOcean Spaces S3 HTTPS endpoint.
+
+[![DigitalOcean Referral Badge](https://web-platforms.sfo2.digitaloceanspaces.com/WWW/Badge%202.svg)](https://www.digitalocean.com/?refcode=56ab1cd93fe6&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge)
 
 ## 🚚 Usage
 
@@ -45,8 +43,10 @@ See the workflow in [🚚 Usage](#-usage), below.
   - [terraform](https://www.terraform.io/) `>=1.1.0` [installed](https://learn.hashicorp.com/tutorials/terraform/install-cli?in=terraform/aws-get-started) on your computer
   - [DigitalOcean CLI (`doctl`)](https://docs.digitalocean.com/reference/doctl/) (`>=1.70.0` recommended) [installed](https://docs.digitalocean.com/reference/doctl/how-to/install/) on your computer
   - [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) `>=1.21` (`>=1.21.9, <1.22` recommended) [installed](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-using-native-package-management) on your computer
-  - (optional) [flux2 CLI (`flux`)](https://fluxcd.io/docs/cmd/) (`>=v0.26` recommended) [installed](https://fluxcd.io/docs/installation/#install-the-flux-cli) on your computer
+  - (optional) [flux2 CLI (`flux`)](https://fluxcd.io/docs/cmd/)[^3] (`>=v0.26` recommended) [installed](https://fluxcd.io/docs/installation/#install-the-flux-cli) on your computer
   - [kubeseal](https://github.com/bitnami-labs/sealed-secrets/releases) (`>=v0.17` recommended) [installed](https://github.com/bitnami-labs/sealed-secrets#installation) on your computer
+
+[^3]: The `flux` CLI tool can be useful for inspecting Flux logs during reconciliation.
 
 ### 🚀 Workflow
 
@@ -99,9 +99,9 @@ This step-by-step workflow guides you through creating the DigitalOcean infrastr
     Because this repository currently reflects the state of live, configured system, the K8s definitions in the `flux/` directory will not be appropriate to any new system that you deploy.
 
     Prepare the configuration for a fresh deployment on new infrastructure by renaming the `flux/` directory, e.g. to `flux.example/`.
-    Commit the change to your forked repository. If you push the changes to a different (new) branch, make a note of the branch name.[^2]
+    Commit the change to your forked repository. If you push the changes to a different (new) branch, make a note of the branch name.[^4]
     
-    [^2]:  You'll configure Flux to watch a specific directory in your repo for changes to your K8s cluster, by default that directory is named `flux`. An alternative would be to adjust the input variable in Terraform to instruct Flux to use a different location for reconciliation.
+    [^4]:  You'll configure Flux to watch a specific directory in your repo for changes to your K8s cluster, by default that directory is named `flux`. An alternative would be to adjust the input variable in Terraform to instruct Flux to use a different location for reconciliation.
 
 4. #### Create a Terraform Cloud organization and workspace
 
@@ -503,9 +503,9 @@ This step-by-step workflow guides you through creating the DigitalOcean infrastr
 
     See the [application source code repository](https://github.com/imgrant/LaravelGallery) for more information on the app itself and how to use it.
 
-    💡 The application uses [Laravel's built-in authentication controllers](https://laravel.com/docs/5.6/authentication), you can use the 'Register' function to create a user account (need not be a real email address) in order to access the app.
+    💡 The application uses [Laravel's built-in authentication controllers](https://laravel.com/docs/5.6/authentication), you can use the 'Register' function to create a user account (need not be a real email address) in order to access the app.[^4]
 
-    💡 N.b. Since this is a demo application, email functionality is not configured or enabled via the deployment. The password reset feature does not function.
+[^4]: Since this is a demo application, email functionality is not configured or enabled via the deployment. The password reset feature does not function.
 
 21. #### 🍵 When you're done, tear down the infrastructure resources using Terraform
 
@@ -534,5 +534,3 @@ This step-by-step workflow guides you through creating the DigitalOcean infrastr
 
     Destroy complete! Resources: 42 destroyed.
     ```
-  
-[![DigitalOcean Referral Badge](https://web-platforms.sfo2.digitaloceanspaces.com/WWW/Badge%202.svg)](https://www.digitalocean.com/?refcode=56ab1cd93fe6&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge)
