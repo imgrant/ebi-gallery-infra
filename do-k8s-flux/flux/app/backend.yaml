@@ -18,6 +18,20 @@ spec:
         tier: backend
         layer: php
     spec:
+      initContainers:
+        - name: migrations
+          image: igrnt/ebi-gallery-backend:1.1.2
+          command:
+            - php
+          args:
+            - artisan
+            - migrate
+            - --force
+          envFrom:
+            - configMapRef:
+                name: ebi-gallery
+            - secretRef:
+                name: ebi-gallery
       containers:
         - name: backend-fpm
           image: igrnt/ebi-gallery-backend:1.1.2
