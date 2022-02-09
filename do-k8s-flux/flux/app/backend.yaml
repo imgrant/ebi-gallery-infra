@@ -20,7 +20,7 @@ spec:
     spec:
       initContainers:
         - name: artisan-migrate
-          image: igrnt/ebi-gallery-backend:1.1.2
+          image: igrnt/ebi-gallery-backend:1.1.4
           command:
             - php
           args:
@@ -34,7 +34,7 @@ spec:
                 name: ebi-gallery
       containers:
         - name: backend-fpm
-          image: igrnt/ebi-gallery-backend:1.1.2
+          image: igrnt/ebi-gallery-backend:1.1.4
           ports:
             - containerPort: 9000
           envFrom:
