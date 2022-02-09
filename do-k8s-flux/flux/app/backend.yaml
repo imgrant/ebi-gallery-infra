@@ -19,7 +19,7 @@ spec:
         layer: php
     spec:
       initContainers:
-        - name: migrations
+        - name: artisan-migrate
           image: igrnt/ebi-gallery-backend:1.1.2
           command:
             - php
