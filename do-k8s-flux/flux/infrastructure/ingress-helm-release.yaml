@@ -19,3 +19,4 @@ spec:
       service:
         annotations:
           service.beta.kubernetes.io/do-loadbalancer-name: "lb-k8s-ebi-gallery"
+          nginx.ingress.kubernetes.io/proxy-body-size: 10m
