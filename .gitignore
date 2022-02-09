@@ -13,6 +13,8 @@ crash.log
 # version control.
 #
 # example.tfvars
+# 
+# Ignore any custom auto.tfvars files (see example.tfvars for a template)
 *.auto.tfvars
 
 # Ignore override files as they are usually used to override resources locally and so
@@ -30,6 +32,9 @@ override.tf.json
 # example: *tfplan*
 *tfplan*
 
+# Ignore Terraform Cloud settings (see cloud.tf.sample)
+cloud.tf
+
 # VS Code
 .vscode
 
@@ -38,3 +43,6 @@ ebi_gallery_key.pem
 
 # Config file for aws-nuke
 aws-ec2-docker/terraform/aws-nuke-config.yml
+
+# Don't commit any exported Sealed Secrets certificates
+sealed-secrets*.pem

@@ -1,0 +1,8 @@
+terraform {
+  cloud {
+    organization = "my-org"
+    workspaces {
+      name = "ebi-gallery"
+    }
+  }
+}

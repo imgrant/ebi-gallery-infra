@@ -1,0 +1,44 @@
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging-cloudflare
+  namespace: cert-manager
+spec:
+  acme:
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    email: ian@iangrant.me
+    privateKeySecretRef:
+      name: letsencrypt-staging-cloudflare
+    solvers:
+      - dns01:
+          cloudflare:
+            email: ian@iangrant.me
+            apiTokenSecretRef:
+              name: cloudflare-api-token
+              key: api-token
+        selector:
+          dnsZones:
+            - 'iangrant.me'
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-production-cloudflare
+  namespace: cert-manager
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: ian@iangrant.me
+    privateKeySecretRef:
+      name: letsencrypt-production-cloudflare
+    solvers:
+      - dns01:
+          cloudflare:
+            email: ian@iangrant.me
+            apiTokenSecretRef:
+              name: cloudflare-api-token
+              key: api-token
+        selector:
+          dnsZones:
+            - 'iangrant.me'
