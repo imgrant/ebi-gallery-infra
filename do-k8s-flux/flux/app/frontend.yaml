@@ -48,6 +48,7 @@ metadata:
   namespace: default
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-production-cloudflare"
+    nginx.ingress.kubernetes.io/proxy-body-size: 10m
 spec:
   tls:
   - hosts:
