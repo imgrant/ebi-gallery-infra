@@ -6,7 +6,7 @@ This deployment uses [_Terraform_](https://www.terraform.io/) to provision the b
 
 [_Ansible_](https://www.ansible.com/) is used to configure the system and deploy the application. Some glue is provided in the form a dynamic inventory plugin for Ansible, [_terraform-inventory_](https://github.com/adammck/terraform-inventory), which is used to help pass output from Terraform to Ansible.
 
-You can deploy the application yourself using this code; see [⚡️Quick start](#%E2%9A%A1%EF%B8%8F-quick-start) or the workflow in [🚚Usage](#%F0%9F%9A%9A-usage), below.
+You can deploy the application yourself using this code; see [⚡️ Quick start](#-quick-start) or the workflow in [🚚 Usage](#-usage), below.
 
 ### Features
 
@@ -42,7 +42,7 @@ $ ./deploy_ebi_gallery.sh
 
 ### 🚀 Workflow
 
-  > 🔔 The following example shows sample values for sensitive or specific parameters; substitute your own configuration accordingly.
+🔔 The following example shows sample values for sensitive or specific parameters; substitute your own configuration accordingly.
 
 1. #### Configure your AWS credentials
 
@@ -181,9 +181,11 @@ $ ./deploy_ebi_gallery.sh
     private_key = "ebi_gallery_key.pem"
     ```
 
-    ⚠️ Note that in this example code, no [backend](https://www.terraform.io/language/settings/backends) is defined; the Terraform [state](https://www.terraform.io/language/state) will be stored locally in a file named `terraform.tfstate`. Keep this safe, as you will need it to properly destroy your infrastructure later.
+    ⚠️ Note that in this example code, no [backend](https://www.terraform.io/language/settings/backends) is defined; the Terraform [state](https://www.terraform.io/language/state) will be stored locally in a file named `terraform.tfstate`. Keep this safe, as you will need it to properly destroy your infrastructure later.[^1]
+    
+[^1]: If you lose or delete the `terraform.tfstate` state file, Terraform won't be able to destroy the infrastructure it previously created. Manually reconstructing the state file is possible, but painstaking and laborious. [_aws-nuke_](https://github.com/rebuy-de/aws-nuke) is useful tool that can be used to comprehensively destroy resources in an AWS account. An example config file for _aws-nuke_ is provided in [terraform/aws-nuke-config.yml.sample](terraform/aws-nuke-config.yml.sample) — see the [_aws-nuke_ documentation](https://github.com/rebuy-de/aws-nuke#usage) for how to use it.
 
-5. ### Install the required Ansible collections and roles
+5. #### Install the required Ansible collections and roles
 
     ```shell
     $ cd ../ansible
@@ -234,7 +236,7 @@ $ ./deploy_ebi_gallery.sh
    ssh -i ../terraform/ebi_gallery_key.pem ubuntu@203.0.113.79
    ```
 
-   💡 The [`docker-compose.yml` file](https://github.com/imgrant/LaravelGallery/blob/master/docker-compose.yml) provided with the application builds the images for the backend and frontend services from the source code. This can take a long time in the first instance, especially on small EC2 types such as the default [_t2.micro_](https://aws.amazon.com/ec2/instance-types/t2/). To alleviate this, you could either assign a larger size via the `ec2_instance_size` [Terraform input variable](https://www.terraform.io/language/values/variables#assigning-values-to-root-module-variables), or manually reconfigure the `docker-compose.yml` container definitions to pull the [pre-existing images from CI builds](https://hub.docker.com/u/igrnt).
+   💡 The [`docker-compose.yml`](https://github.com/imgrant/LaravelGallery/blob/master/docker-compose.yml) file provided with the application builds the images for the backend and frontend services from the source code. This can take a long time in the first instance, especially on small EC2 types such as the default [t2.micro](https://aws.amazon.com/ec2/instance-types/t2/). To alleviate this, you could either assign a larger size via the `ec2_instance_size` [Terraform input variable](https://www.terraform.io/language/values/variables#assigning-values-to-root-module-variables), or manually reconfigure the `docker-compose.yml` container definitions to pull the [pre-existing images from CI builds](https://hub.docker.com/u/igrnt).
 
 7. #### 🥳 Go to the application URL and use the interface to browse and upload images
 
@@ -251,9 +253,9 @@ $ ./deploy_ebi_gallery.sh
 
     See the [application source code repository](https://github.com/imgrant/LaravelGallery) for more information on the app itself and how to use it.
 
-    💡 The application uses [Laravel's built-in authentication controllers](https://laravel.com/docs/5.6/authentication), you can use the 'Register' function to create a user account (need not be a real email address) in order to access the app.
+    💡 The application uses [Laravel's built-in authentication controllers](https://laravel.com/docs/5.6/authentication), you can use the 'Register' function to create a user account (need not be a real email address) in order to access the app.[^2]
 
-    💡 N.b. Since this is a demo application, email functionality is not configured or enabled via the deployment. The password reset feature does not function.
+[^2]: Since this is a demo application, email functionality is not configured or enabled via the deployment. The password reset feature does not function.
 
 8. #### 🍵 When you're done, tear down the infrastructure resources using Terraform
 
@@ -302,5 +304,3 @@ $ ./deploy_ebi_gallery.sh
 
     Destroy complete! Resources: 38 destroyed.
     ```
-
-    💡 If you have lost or deleted the `terraform.tfstate` state file, Terraform won't be able to destroy the infrastructure it previously created. Manually reconstructing the state file is possible, but painstaking and laborious. [_aws-nuke_](https://github.com/rebuy-de/aws-nuke) is useful tool that can be used to comprehensively destroy resources in an AWS account. An example config file for _aws-nuke_ is provided in [terraform/aws-nuke-config.yml.sample](terraform/aws-nuke-config.yml.sample) — see the [_aws-nuke_ documentation](https://github.com/rebuy-de/aws-nuke#usage) for how to use it.
