@@ -8,10 +8,10 @@ Terraform also bootstraps the Kubernetes cluster with [_Flux_](https://fluxcd.io
 
 Once _Flux_ is installed, it will take over and deploy workloads defined in the source repository (see [Features](#features)). The _Sealed Secrets_ infrastructure component must be available before encrypted secrets needed by other components (_cert-manager_, _ExternalDNS_, the end application configuration) can be used.
 
-This repository represents the configured state of a live system, deployed at https://ebi-gallery-do.iangrant.me[^1]
+This repository represents the configured state of a live system, deployed at https://ebi-gallery-do.iangrant.me [^1]
 
 You can deploy the application yourself using this codebase by forking the repository, and modifying the deployment & configuration parameters appropriately. At the time of writing, DigitalOcean offer a [$100 free credit, 60-day trial](https://www.digitalocean.com/?refcode=56ab1cd93fe6) (or you could adapt the code to another cloud provider).
-See the workflow in [🚚Usage](#%F0%9F%9A%9A-usage), below.
+See the workflow in [🚚 Usage](#-usage), below.
 
 [^1]: The live system has been deployed for the purposes of demonstrating the technical challenge; it will be shut down after February 14, 2002.
 
@@ -50,14 +50,20 @@ See the workflow in [🚚Usage](#%F0%9F%9A%9A-usage), below.
 
 ### 🚀 Workflow
 
-  > 🔔 The following example shows sample values for sensitive or specific parameters; substitute your own configuration accordingly.
+This step-by-step workflow guides you through creating the DigitalOcean infrastructure and Kubernetes components from scratch. You could combine most of the Flux components to accelerate the deployment, or for redeployment.
+
+🔔 The following example shows sample values for sensitive or specific parameters; substitute your own configuration accordingly.
 
 1. #### Configure your DigitalOcean credentials
 
     Use `doctl` to configure your local environment with your DigitalOcean personal access token:
 
     ```shell
-    doctl auth init
+    $ doctl auth init
+    Please authenticate doctl for use with your DigitalOcean account. You can generate a token in the control panel at https://cloud.digitalocean.com/account/api/tokens
+
+    Enter your access token:
+    Validating token... OK
     ````
 
 2. #### Fork and clone this repository
@@ -66,17 +72,36 @@ See the workflow in [🚚Usage](#%F0%9F%9A%9A-usage), below.
 
     ```shell
     $ gh auth login --web
+    ! First copy your one-time code: XXXX-XXXX
+    - Press Enter to open github.com in your browser...
+    ✓ Authentication complete. Press Enter to continue...
+
+    ✓ Logged in as imgrant
     $ gh repo fork https://github.com/imgrant/ebi-gallery-infra.git --clone
+    Cloning into 'ebi-gallery-infra'...
+    remote: Enumerating objects: 462, done.
+    remote: Counting objects: 100% (462/462), done.
+    remote: Compressing objects: 100% (300/300), done.
+    remote: Total 462 (delta 188), reused 387 (delta 130), pack-reused 0
+    Receiving objects: 100% (462/462), 1.80 MiB | 657.00 KiB/s, done.
+    Resolving deltas: 100% (188/188), done.
+    Updating upstream
+    From https://github.com/imgrant/ebi-gallery-infra
+     * [new branch]      doks-flux-deployment -> upstream/doks-flux-deployment
+     * [new branch]      main                 -> upstream/main
+    ✓ Cloned fork
     ```
 
-    💡 The remainder of this tutorial assumes you're working in your clone of the repository. Unless otherwise clear, you can assume all filenames and paths shown are **relative to the `do-k8s-flux` subdirectory.**
+    💡 The remainder of this tutorial assumes you're working in your forked clone of the repository. Unless otherwise clear, you can assume all filenames and paths shown are **relative to the `do-k8s-flux` subdirectory.**
 
 3. #### Clean the existing configuration
 
     Because this repository currently reflects the state of live, configured system, the K8s definitions in the `flux/` directory will not be appropriate to any new system that you deploy.
 
-    Prepare the configuration for a fresh deployment on new infrastructure by renaming the `flux/` directory, e.g. to `flux.example`.
-    Commit the change to your forked repository. If you push the changes to a different (new) branch, make a note of the branch name.
+    Prepare the configuration for a fresh deployment on new infrastructure by renaming the `flux/` directory, e.g. to `flux.example/`.
+    Commit the change to your forked repository. If you push the changes to a different (new) branch, make a note of the branch name.[^2]
+    
+    [^2]:  You'll configure Flux to watch a specific directory in your repo for changes to your K8s cluster, by default that directory is named `flux`. An alternative would be to adjust the input variable in Terraform to instruct Flux to use a different location for reconciliation.
 
 4. #### Create a Terraform Cloud organization and workspace
 
@@ -245,11 +270,17 @@ See the workflow in [🚚Usage](#%F0%9F%9A%9A-usage), below.
 
 9. #### Verify the Kubernetes cluster state
 
-    Use `doctl` to fetch the kubeconfig for your cluster:
+    Use `doctl` to fetch the kubeconfig for your cluster, and use `kubectl` to check the cluster is working:
 
     ```shell
     $ doctl kubernetes cluster kubeconfig save k8s-ebi-gallery
-    $ kubectl get all --all-namespaces
+    Notice: Adding cluster credentials to kubeconfig file found in "/home/ebi-user/.kube/config"
+    Notice: Setting current-context to do-lon1-k8s-ebi-gallery
+    $ kubectl cluster-info
+    Kubernetes control plane is running at https://00000000-0000-0000-0000-000000000000.ondigitalocean.com
+    CoreDNS is running at https://00000000-0000-0000-0000-000000000000.k8s.ondigitalocean.com/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+    To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
     ```
 
 10. #### Deploy supporting infrastructure: namespaces
@@ -361,7 +392,7 @@ See the workflow in [🚚Usage](#%F0%9F%9A%9A-usage), below.
     $ kubeseal --cert sealed-secrets.pem --format=yaml < cert-manager-cloudflare-api-token.yaml > cert-manager-cf-apitoken-secret.yaml
     ```
 
-    ⚠️ Remove the plaintext secret file *before you commit* to git:
+    ⚠️ Remove the plaintext secret file **before you commit** to version control:
 
     ```shell
     $ shred -u cert-manager-cloudflare-api-token.yaml
@@ -405,7 +436,7 @@ See the workflow in [🚚Usage](#%F0%9F%9A%9A-usage), below.
 
       - `cert-manager-clusterissuer-letsencrypt-cloudflare.yaml`
     
-      > ❗ You will need to edit the manifest first, to change the domain (`dnsZone`) and email address.
+    ❗ You will need to edit the manifest first, to change the domain (`dnsZone`) and email address.
 
     Commit and push the changes, and allow a few minutes for Flux to reconcile the changes.
     You can check the Issuer resource was successfully created with `kubectl`:
@@ -422,7 +453,7 @@ See the workflow in [🚚Usage](#%F0%9F%9A%9A-usage), below.
 
       - `external-dns-helm-release.yaml`
 
-      > ❗ You will need to edit the manifest first, to change the `domainFilters` to reflect your domain.
+    ❗ You will need to edit the manifest first, to change the `domainFilters` to reflect your domain.
 
     Commit and push the changes, and allow a few minutes for Flux to reconcile the changes.
     You can check ExternalDNS was successfully installed with `kubectl`:
