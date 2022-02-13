@@ -478,10 +478,10 @@ This step-by-step workflow guides you through creating the DigitalOcean infrastr
 
     Copy the following application YAML manifests back into the `do-k8s-flux/flux/app` directory inyour repository:
 
-      - env-config.yaml
-      - env-secret.yaml.template
-      - backend.yaml
-      - frontend.yaml
+      - `env-config.yaml`
+      - `env-secret.yaml.template`
+      - `backend.yaml`
+      - `frontend.yaml`
     
     Edit `env-config.yaml` and `env-secret.yaml.template` to include your own parameters. Use `kubeseal` to convert the secret template into a Sealed Secret (removing the plaintext file afterwards, before committing to version control):
 
@@ -503,9 +503,9 @@ This step-by-step workflow guides you through creating the DigitalOcean infrastr
 
     See the [application source code repository](https://github.com/imgrant/LaravelGallery) for more information on the app itself and how to use it.
 
-    💡 The application uses [Laravel's built-in authentication controllers](https://laravel.com/docs/5.6/authentication), you can use the 'Register' function to create a user account (need not be a real email address) in order to access the app.[^4]
+    💡 The application uses [Laravel's built-in authentication controllers](https://laravel.com/docs/5.6/authentication), you can use the 'Register' function to create a user account (need not be a real email address) in order to access the app.[^5]
 
-[^4]: Since this is a demo application, email functionality is not configured or enabled via the deployment. The password reset feature does not function.
+[^5]: Since this is a demo application, email functionality is not configured or enabled via the deployment. The password reset feature does not function.
 
 21. #### 🍵 When you're done, tear down the infrastructure resources using Terraform
 
